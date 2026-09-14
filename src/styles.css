@@ -44,6 +44,9 @@ a:hover { text-decoration: underline; }
 .brand-panel { display: flex; flex-direction: column; justify-content: space-between; min-height: 100dvh; padding: clamp(32px, 5vw, 76px) clamp(28px, 6vw, 96px); overflow: hidden; position: relative; background: #fff; color: var(--ink); border-right: 1px solid var(--line); }
 .brand-panel__texture, .brand-panel::after { display: none; }
 .brand-header, .brand-copy, .brand-footer { position: relative; z-index: 2; }
+.brand-panel > .brand-header,
+.brand-panel > .brand-copy,
+.brand-panel > .brand-footer { display: none; }
 .brand-header { display: flex; align-items: center; gap: 13px; }
 .brand-header strong { display: block; font: 700 15px 'Inter', sans-serif; letter-spacing: .08em; }
 .brand-header span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; letter-spacing: .08em; }
@@ -103,4 +106,7 @@ a:hover::after, a:focus-visible::after { transform: scaleX(1); transform-origin:
 @keyframes motion-fade-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes lottie-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
 @media (prefers-reduced-motion: reduce) { .auth-page, .brand-panel, .form-panel, .brand-header, .brand-copy .eyebrow, .brand-copy h1, .brand-copy__description, .brand-points > div, .form-heading .eyebrow, .form-heading h2, .form-heading p:last-child, .form-shell .sso-button, .form-shell .divider, .form-shell form > *, .form-help, .form-legal, .brand-lottie { animation: none !important; transform: none !important; } }
+
+.status-message.is-error { border-color: #f2b8b5; background: #fff5f4; color: #b42318; }
+.status-message.is-success { border-color: #b7dfc5; background: #f2fbf5; color: #176b36; }
 
