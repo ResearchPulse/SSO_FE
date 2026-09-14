@@ -39,8 +39,5 @@ export default function ForgotPasswordScreen() {
         </section>
       </div>
     </main>
-  );
-    <section className="brand-panel" aria-label="Giới thiệu Hyperdata Lab SSO"><div className="brand-panel__texture" aria-hidden="true" /><header className="brand-header"><BrandMark /><div><strong>HYPERDATA LAB</strong><span>Single Sign-On</span></div></header><div className="brand-copy"><p className="eyebrow">ACCOUNT RECOVERY</p><h1>Khôi phục quyền truy cập nghiên cứu.</h1><p className="brand-copy__description">Chúng tôi sẽ hướng dẫn bạn thiết lập lại mật khẩu an toàn qua email tài khoản.</p></div><footer className="brand-footer"><span>© {new Date().getFullYear()} Hyperdata Lab</span><span>Hỗ trợ kỹ thuật</span></footer></section>
-    <section className="form-panel" aria-labelledby="forgot-title"><div className="form-shell"><div className="mobile-brand"><BrandMark /><span>HYPERDATA LAB SSO</span></div><div className="form-heading"><p className="eyebrow">ACCOUNT RECOVERY</p><h2 id="forgot-title">Quên mật khẩu?</h2><p>Nhập email tài khoản. Hyperdata Lab sẽ gửi hướng dẫn khôi phục mật khẩu.</p></div><form onSubmit={submit} noValidate><div className="field-group"><label htmlFor="recovery-email">Email tài khoản</label><input id="recovery-email" name="email" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setStatus(''); }} placeholder="name@email.com" autoComplete="email" /></div>{status && <div className="status-message" role="status">{status}</div>}<Button type="submit" variant="primary" className="primary-button">Gửi hướng dẫn <ArrowIcon /></Button></form><p className="form-help">Nhớ mật khẩu? <Link href="/">Quay lại đăng nhập</Link></p><p className="form-legal">Bằng việc tiếp tục, bạn đồng ý với quy định sử dụng và chính sách bảo mật của Hyperdata Lab.</p></div></section>
-  </main>;
-}
+ );
+} 
