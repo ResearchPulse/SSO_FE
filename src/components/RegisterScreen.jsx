@@ -14,17 +14,28 @@ export default function RegisterScreen() {
   const [form, setForm] = useState({ lastName: '', firstName: '', email: '', password: '', birthDate: '', gender: 'male', terms: false });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState('');
-  const update = (name, value) => { setForm((current) => ({ ...current, [name]: value })); setStatus(''); };
+  const [statusType, setStatusType] = useState('error');
+  const update = (name, value) => { setForm((current) => ({ ...current, [name]: value })); setStatus(''); setStatusType('error'); };
 
   const submit = async (event) => {
     event.preventDefault();
-    if (!form.lastName || !form.firstName || !form.email || !form.password || !form.birthDate || !form.terms) return setStatus('Vui lòng hoàn tất thông tin bắt buộc và đồng ý điều khoản.');
-    if (form.password.length < 8) return setStatus('Mật khẩu phải có ít nhất 8 ký tự.');
+    if (!form.lastName || !form.firstName || !form.email || !form.password || !form.birthDate || !form.terms) {
+      setStatusType('error');
+      return setStatus('Please complete all required fields and accept the terms.');
+    }
+    if (form.password.length < 8) {
+      setStatusType('error');
+      return setStatus('Password must be at least 8 characters.');
+    }
     setLoading(true);
     try {
       await api.register({ email: form.email.trim(), password: form.password, name: `${form.firstName.trim()} ${form.lastName.trim()}` });
-      window.location.assign('/auth/callback');
-    } catch (error) { setStatus(error.message); } finally { setLoading(false); }
+      setStatusType('success');
+      setStatus('Account created successfully. Please check your email to activate your account.');
+    } catch (error) {
+      setStatusType('error');
+      setStatus("We couldn't create your account. Please try again.");
+    } finally { setLoading(false); }
   };
 
   return (
@@ -51,7 +62,7 @@ export default function RegisterScreen() {
                 <div className="field-group"><label>Gender</label><div className={`segmented-control ${form.gender === 'female' ? 'is-female' : ''}`}><button type="button" className={form.gender === 'male' ? 'is-selected' : ''} onClick={() => update('gender', 'male')}>Male</button><button type="button" className={form.gender === 'female' ? 'is-selected' : ''} onClick={() => update('gender', 'female')}>Female</button></div></div>
               </div>
               <label className="terms-row"><input type="checkbox" checked={form.terms} onChange={(event) => update('terms', event.target.checked)} /><span className="checkmark" /><span>I agree to the <a href="#terms" onClick={(event) => event.preventDefault()}>Terms of Service</a> and <a href="#privacy" onClick={(event) => event.preventDefault()}>Privacy Policy</a>.</span></label>
-              {status && <div className="status-message is-error" role="alert">{status}</div>}
+              {status && <div className={`status-message is-${statusType}`} role={statusType === 'error' ? 'alert' : 'status'}>{status}</div>}
               <Button type="submit" variant="primary" className="primary-button" loading={loading}>Create account<ArrowIcon /></Button>
             </form>
           </div>
