@@ -45,7 +45,3 @@ button.primary-button:hover:not(:disabled) { border-color: var(--primary-dark); 
 
 .register-page .role-field legend em,
 .register-page .register-grid--details .field-group:nth-child(2) label em { display: none; }
-
-@media (prefers-reduced-motion: reduce) {
-  .btn-primary-glow, .btn-dark-solid, .btn-outline-secondary, .button-spinner { animation: none; transition: none; }
-}
