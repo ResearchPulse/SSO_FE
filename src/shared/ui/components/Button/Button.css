@@ -43,5 +43,4 @@ button.primary-button:hover:not(:disabled) { border-color: var(--primary-dark); 
 .button-spinner { display: inline-block; width: 16px; height: 16px; margin-right: 8px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: button-spin .7s linear infinite; }
 @keyframes button-spin { to { transform: rotate(360deg); } }
 
-.register-page .role-field legend em,
-.register-page .register-grid--details .field-group:nth-child(2) label em { display: none; }
+.register-page .role-field legend em { display: none; }

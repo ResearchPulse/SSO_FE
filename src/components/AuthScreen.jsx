@@ -10,6 +10,7 @@ import {
   buildAuthorizeUrl,
   clearOidcContext,
   getOidcContext,
+  getSavedOidcContext,
   saveOidcContext,
 } from '../lib/oidc';
 
@@ -32,12 +33,12 @@ function EyeIcon({ hidden }) {
 const queryErrorMessages = {
   google_auth_failed: 'Google sign-in failed.',
   social_auth_failed: 'Unable to authenticate with Google.',
+  sso_auth_failed: 'SSO authorization could not be completed.',
 };
 
 export default function AuthScreen() {
   const searchParams = useSearchParams();
   const oidcContext = useMemo(() => getOidcContext(searchParams), [searchParams]);
-  const isOidcFlow = Boolean(oidcContext && !oidcContext.invalid);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -45,11 +46,15 @@ export default function AuthScreen() {
   const [status, setStatus] = useState('');
   const [error, setError] = useState(false);
 
+  const queryString = useMemo(() => {
+    const s = searchParams?.toString();
+    return s ? `?${s}` : '';
+  }, [searchParams]);
+
   useEffect(() => {
     const queryError = searchParams.get('error');
 
     if (queryError) {
-      clearOidcContext();
       setStatus(queryErrorMessages[queryError] || 'Sign-in failed.');
       setError(true);
       return;
@@ -62,11 +67,28 @@ export default function AuthScreen() {
       return;
     }
 
-    if (!isOidcFlow) clearOidcContext();
-  }, [isOidcFlow, oidcContext, searchParams]);
+    if (oidcContext && !oidcContext.invalid) {
+      saveOidcContext(oidcContext);
+    }
+
+    const activeContext = oidcContext || getSavedOidcContext();
+    if (activeContext && !activeContext.invalid) {
+      // If user already has an active SSO session, auto-redirect immediately
+      api.me().then((data) => {
+        const u = data?.user || (data?.id ? data : null);
+        if (u) {
+          clearOidcContext();
+          window.location.assign(buildAuthorizeUrl(activeContext));
+        }
+      }).catch(() => {});
+    }
+  }, [oidcContext, searchParams]);
 
   const beginGoogleLogin = () => {
-    if (isOidcFlow) saveOidcContext(oidcContext);
+    const activeContext = oidcContext || getSavedOidcContext();
+    if (activeContext && !activeContext.invalid) {
+      saveOidcContext(activeContext);
+    }
     window.location.assign(`${API_BASE}/api/v1/auth/social/google/start`);
   };
 
@@ -87,12 +109,19 @@ export default function AuthScreen() {
       return;
     }
 
+    const activeContext = oidcContext || getSavedOidcContext();
+
     setLoading(true);
     try {
       await api.login({ email: email.trim(), password });
-      window.location.assign(isOidcFlow ? buildAuthorizeUrl(oidcContext) : '/auth/callback');
+      if (activeContext && !activeContext.invalid) {
+        clearOidcContext();
+        window.location.assign(buildAuthorizeUrl(activeContext));
+      } else {
+        window.location.assign('http://localhost:5173');
+      }
     } catch (requestError) {
-      const message = requestError.message.toLowerCase().includes('invalid')
+      const message = requestError.message?.toLowerCase().includes('invalid')
         ? 'Invalid email or password.'
         : 'Unable to sign in. Please try again.';
       setStatus(message);
@@ -102,24 +131,88 @@ export default function AuthScreen() {
     }
   };
 
-  return <main className="auth-page auth-page--reference">
-    <div className="auth-frame">
-      <AuthBrandPanel />
-      <section className="form-panel" aria-labelledby="auth-title">
-        <div className="form-topline">Don&apos;t have an account? <Link href="/register">Sign up</Link></div>
-        <div className="form-shell">
-          <div className="form-heading"><h2 id="auth-title">Welcome back</h2><p>Sign in to continue to Hyperdata Lab</p></div>
-          <Button type="button" variant="outline" className="sso-button" onClick={beginGoogleLogin}><GoogleIcon /><span>Continue with Google</span></Button>
-          <div className="divider"><span>OR</span></div>
-          <form onSubmit={submit} noValidate>
-            <div className="field-group reference-field"><label htmlFor="email">Email</label><div className="input-with-icon"><MailIcon /><input id="email" name="email" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setStatus(''); setError(false); }} placeholder="Enter your email" autoComplete="email" /></div></div>
-            <div className="field-group reference-field"><label htmlFor="password">Password</label><div className="input-with-icon password-wrap"><LockIcon /><input id="password" name="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => { setPassword(event.target.value); setStatus(''); setError(false); }} placeholder="Enter your password" autoComplete="current-password" /><button type="button" className="icon-button" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword((value) => !value)}><EyeIcon hidden={showPassword} /></button></div><Link className="reference-forgot" href="/forgot-password">Forgot password?</Link></div>
-            {status && <div className={`status-message ${error ? 'is-error' : 'is-success'}`} role={error ? 'alert' : 'status'}>{status}</div>}
-            <Button type="submit" variant="primary" className="primary-button" loading={loading}>Sign in</Button>
-          </form>
-        </div>
-        <footer className="form-footer"><a href="#terms">Terms</a><a href="#privacy">Privacy</a><a href="#help">Help</a></footer>
-      </section>
-    </div>
-  </main>;
+  return (
+    <main className="auth-page auth-page--reference">
+      <div className="auth-frame">
+        <AuthBrandPanel />
+        <section className="form-panel" aria-labelledby="auth-title">
+          <div className="form-topline">
+            Don&apos;t have an account? <Link href={`/register${queryString}`}>Sign up</Link>
+          </div>
+          <div className="form-shell">
+            <div className="form-heading">
+              <h2 id="auth-title">Welcome back</h2>
+              <p>Sign in to continue to Hyperdata Lab</p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="sso-button"
+              onClick={beginGoogleLogin}
+            >
+              <GoogleIcon />
+              <span>Continue with Google</span>
+            </Button>
+            <div className="divider"><span>OR</span></div>
+            <form onSubmit={submit} noValidate>
+              <div className="field-group reference-field">
+                <label htmlFor="email">Email</label>
+                <div className="input-with-icon">
+                  <MailIcon />
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={email}
+                    onChange={(event) => { setEmail(event.target.value); setStatus(''); setError(false); }}
+                    placeholder="Enter your email"
+                    autoComplete="email"
+                  />
+                </div>
+              </div>
+              <div className="field-group reference-field">
+                <label htmlFor="password">Password</label>
+                <div className="input-with-icon password-wrap">
+                  <LockIcon />
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(event) => { setPassword(event.target.value); setStatus(''); setError(false); }}
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    onClick={() => setShowPassword((value) => !value)}
+                  >
+                    <EyeIcon hidden={showPassword} />
+                  </button>
+                </div>
+                <Link className="reference-forgot" href={`/forgot-password${queryString}`}>
+                  Forgot password?
+                </Link>
+              </div>
+              {status && (
+                <div className={`status-message ${error ? 'is-error' : 'is-success'}`} role={error ? 'alert' : 'status'}>
+                  {status}
+                </div>
+              )}
+              <Button type="submit" variant="primary" className="primary-button" loading={loading}>
+                Sign in
+              </Button>
+            </form>
+          </div>
+          <footer className="form-footer">
+            <a href="#terms">Terms</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#help">Help</a>
+          </footer>
+        </section>
+      </div>
+    </main>
+  );
 }

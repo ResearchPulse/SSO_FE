@@ -1,25 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Button from '../shared/ui/components/Button';
 import { api } from '../lib/api';
 import AuthBrandPanel from './AuthBrandPanel';
+import { getOidcContext, saveOidcContext } from '../lib/oidc';
 
 function ArrowIcon() { return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M10.5 4.5 16 10l-5.5 5.5" /></svg>; }
 function MailIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2" /><path d="m4.5 7 7.5 6 7.5-6" /></svg>; }
 function LockIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="10" width="13" height="10" rx="2" /><path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10" /></svg>; }
 
 export default function RegisterScreen() {
-  const [form, setForm] = useState({ lastName: '', firstName: '', email: '', password: '', birthDate: '', gender: 'male', terms: false });
+  const searchParams = useSearchParams();
+  const [form, setForm] = useState({ lastName: '', firstName: '', email: '', password: '', terms: false });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState('');
   const [statusType, setStatusType] = useState('error');
   const update = (name, value) => { setForm((current) => ({ ...current, [name]: value })); setStatus(''); setStatusType('error'); };
 
+  const queryString = useMemo(() => {
+    const s = searchParams?.toString();
+    return s ? `?${s}` : '';
+  }, [searchParams]);
+
+  useEffect(() => {
+    const oidc = getOidcContext(searchParams);
+    if (oidc && !oidc.invalid) {
+      saveOidcContext(oidc);
+    }
+  }, [searchParams]);
+
   const submit = async (event) => {
     event.preventDefault();
-    if (!form.lastName || !form.firstName || !form.email || !form.password || !form.birthDate || !form.terms) {
+    if (!form.lastName || !form.firstName || !form.email || !form.password || !form.terms) {
       setStatusType('error');
       return setStatus('Please complete all required fields and accept the terms.');
     }
@@ -34,7 +49,9 @@ export default function RegisterScreen() {
       setStatus('Account created successfully. Please check your email to activate your account.');
     } catch (error) {
       setStatusType('error');
-      setStatus("We couldn't create your account. Please try again.");
+      setStatus(error.message?.toLowerCase().includes('already exists')
+        ? 'An account with this email address already exists.'
+        : "We couldn't create your account. Please try again.");
     } finally { setLoading(false); }
   };
 
@@ -47,7 +64,7 @@ export default function RegisterScreen() {
           description="One account for your research, publications, and academic insights."
         />
         <section className="form-panel" aria-labelledby="register-title">
-          <div className="form-topline">Already have an account? <Link href="/">Sign in</Link></div>
+          <div className="form-topline">Already have an account? <Link href={`/login${queryString}`}>Sign in</Link></div>
           <div className="form-shell register-shell">
             <div className="form-heading"><h2 id="register-title">Create your account</h2><p>Set up your Hyperdata Lab profile.</p></div>
             <form onSubmit={submit} noValidate>
@@ -57,10 +74,6 @@ export default function RegisterScreen() {
               </div>
               <div className="field-group reference-field"><label htmlFor="register-email">Email</label><div className="input-with-icon"><MailIcon /><input id="register-email" type="email" value={form.email} onChange={(event) => update('email', event.target.value)} placeholder="Enter your email" autoComplete="email" /></div></div>
               <div className="field-group reference-field"><label htmlFor="register-password">Password</label><div className="input-with-icon"><LockIcon /><input id="register-password" type="password" value={form.password} onChange={(event) => update('password', event.target.value)} placeholder="Create a password" autoComplete="new-password" /></div></div>
-              <div className="register-grid register-grid--details">
-                <div className="field-group"><label htmlFor="birthDate">Date of birth</label><input id="birthDate" type="date" value={form.birthDate} onChange={(event) => update('birthDate', event.target.value)} /></div>
-                <div className="field-group"><label>Gender</label><div className={`segmented-control ${form.gender === 'female' ? 'is-female' : ''}`}><button type="button" className={form.gender === 'male' ? 'is-selected' : ''} onClick={() => update('gender', 'male')}>Male</button><button type="button" className={form.gender === 'female' ? 'is-selected' : ''} onClick={() => update('gender', 'female')}>Female</button></div></div>
-              </div>
               <label className="terms-row"><input type="checkbox" checked={form.terms} onChange={(event) => update('terms', event.target.checked)} /><span className="checkmark" /><span>I agree to the <a href="#terms" onClick={(event) => event.preventDefault()}>Terms of Service</a> and <a href="#privacy" onClick={(event) => event.preventDefault()}>Privacy Policy</a>.</span></label>
               {status && <div className={`status-message is-${statusType}`} role={statusType === 'error' ? 'alert' : 'status'}>{status}</div>}
               <Button type="submit" variant="primary" className="primary-button" loading={loading}>Create account<ArrowIcon /></Button>
