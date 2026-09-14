@@ -109,4 +109,15 @@ a:hover::after, a:focus-visible::after { transform: scaleX(1); transform-origin:
 
 .status-message.is-error { border-color: #f2b8b5; background: #fff5f4; color: #b42318; }
 .status-message.is-success { border-color: #b7dfc5; background: #f2fbf5; color: #176b36; }
+.callback-page { display: grid; min-height: 100dvh; place-items: center; padding: 24px; background: var(--paper); }
+.callback-card { width: min(100%, 520px); padding: 40px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 18px 50px rgba(18,35,49,.08); text-align: center; animation: motion-fade-up 350ms ease-out both; }
+.callback-card h1 { margin: 10px 0 12px; color: var(--ink); font-size: 28px; }
+.callback-card p:not(.eyebrow) { color: var(--muted); line-height: 1.6; }
+.callback-spinner { width: 28px; height: 28px; margin: 0 auto 18px; border: 3px solid #dbe5eb; border-top-color: var(--orange); border-radius: 50%; animation: spin .7s linear infinite; }
+.callback-success { display: grid; width: 42px; height: 42px; margin: 0 auto 18px; place-items: center; border-radius: 50%; background: #eaf8ef; color: #176b36; font-size: 24px; font-weight: 700; }
+.callback-data { display: grid; gap: 12px; margin: 28px 0 0; text-align: left; }
+.callback-data div { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.callback-data dt { color: var(--muted); }.callback-data dd { margin: 0; color: var(--ink); font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+.callback-link { display: inline-block; margin-top: 18px; color: var(--blue); font-weight: 600; }
+@media (max-width: 520px) { .callback-card { padding: 28px 20px; }.callback-data div { display: grid; gap: 4px; }.callback-data dd { text-align: left; } }
 

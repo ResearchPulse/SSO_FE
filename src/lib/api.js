@@ -14,6 +14,7 @@ async function request(path, options = {}) {
 export const api = {
   login: (payload) => request('/api/v1/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
   register: (payload) => request('/api/v1/auth/register', { method: 'POST', body: JSON.stringify(payload) }),
+  me: () => request('/api/v1/auth/me'),
 };
 
 export const API_BASE = API_BASE_URL;

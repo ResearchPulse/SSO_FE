@@ -30,7 +30,7 @@ export default function AuthScreen() {
     setLoading(true);
     try {
       await api.login({ email: email.trim(), password });
-      window.location.assign('/profile');
+      window.location.assign('/auth/callback');
     } catch (requestError) {
       setStatus(requestError.message === 'Invalid credentials' ? 'Email hoặc mật khẩu không đúng.' : requestError.message);
       setError(true);

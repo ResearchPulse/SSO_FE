@@ -20,7 +20,7 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await api.register({ email: form.email.trim(), password: form.password, name: `${form.firstName.trim()} ${form.lastName.trim()}` });
-      window.location.assign('/profile');
+      window.location.assign('/auth/callback');
     } catch (error) { setStatus(error.message); } finally { setLoading(false); }
   };
 
