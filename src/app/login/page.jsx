@@ -1,4 +1,4 @@
-import AuthScreen from '../components/AuthScreen';
+import AuthScreen from '../../components/AuthScreen';
 import { Suspense } from 'react';
 
 export default function LoginPage() {

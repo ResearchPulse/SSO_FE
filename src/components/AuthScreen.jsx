@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Button from '../shared/ui/components/Button';
 import { api, API_BASE } from '../lib/api';
@@ -9,8 +10,29 @@ function BrandMark() { return <div className="brand-mark" aria-hidden="true"><sp
 function ArrowIcon() { return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M10.5 4.5 16 10l-5.5 5.5" /></svg>; }
 function GoogleIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.23c0-.73-.07-1.43-.23-2.1H12v3.97h5.23a4.48 4.48 0 0 1-1.94 2.93v2.43h3.14c1.84-1.69 2.92-4.18 2.92-7.23Z" /><path fill="#34A853" d="M12 21.63c2.63 0 4.84-.87 6.45-2.37l-3.14-2.43c-.87.58-1.98.92-3.31.92-2.54 0-4.7-1.72-5.47-4.03H3.28v2.5A9.74 9.74 0 0 0 12 21.63Z" /><path fill="#FBBC05" d="M6.53 13.72a5.84 5.84 0 0 1 0-3.44v-2.5H3.28a9.74 9.74 0 0 0 0 8.44l3.25-2.5Z" /><path fill="#EA4335" d="M12 6.25c1.43 0 2.72.49 3.73 1.46l2.8-2.8C16.83 3.34 14.62 2.37 12 2.37a9.74 9.74 0 0 0-8.72 5.41l3.25 2.5C7.3 7.97 9.46 6.25 12 6.25Z" /></svg>; }
 function EyeIcon({ hidden }) { return <svg viewBox="0 0 24 24" aria-hidden="true">{hidden ? <path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.2A10.7 10.7 0 0 1 12 5c5.2 0 9 5 9 7s-3.8 7-9 7a10 10 0 0 1-5.1-1.4M5.3 7.1C3.8 8.4 3 10.1 3 12c0 1.1 1 2.8 2.5 4.4" /> : <><path d="M3 12s3.2-7 9-7 9 7 9 7-3.2 7-9 7-9-7-9-7Z" /><circle cx="12" cy="12" r="2.5" /></>}</svg>; }
+function buildGoogleUrl(broker) { const url = new URL(`${API_BASE}/api/v1/auth/social/google/start`); Object.entries(broker).forEach(([key, value]) => { if (value) url.searchParams.set(key, value); }); return url.toString(); }
 
 export default function AuthScreen() {
+  const searchParams = useSearchParams();
+  const broker = {
+    client_id: searchParams.get('client_id'),
+    redirect_uri: searchParams.get('redirect_uri'),
+    code_challenge: searchParams.get('code_challenge'),
+    state: searchParams.get('state') || undefined,
+  };
+  const isBrokerFlow = Boolean(broker.client_id && broker.redirect_uri && broker.code_challenge);
+  useEffect(() => {
+    if (!isBrokerFlow) return undefined;
+    const handleBrokerGoogle = (event) => {
+      const button = event.target.closest('.sso-button');
+      if (!button) return;
+      event.preventDefault();
+      event.stopPropagation();
+      window.location.href = buildGoogleUrl(broker);
+    };
+    document.addEventListener('click', handleBrokerGoogle, true);
+    return () => document.removeEventListener('click', handleBrokerGoogle, true);
+  }, [isBrokerFlow, broker.client_id, broker.redirect_uri, broker.code_challenge, broker.state]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +52,10 @@ export default function AuthScreen() {
     setLoading(true);
     try {
       await api.login({ email: email.trim(), password });
-      window.location.assign('/auth/callback');
+      if (isBrokerFlow) {
+        const result = await api.completeBroker(broker);
+        window.location.assign(result.redirect_url);
+      } else window.location.assign('/auth/callback');
     } catch (requestError) {
       setStatus(requestError.message === 'Invalid credentials' ? 'Email hoặc mật khẩu không đúng.' : requestError.message);
       setError(true);
