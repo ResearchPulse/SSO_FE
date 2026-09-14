@@ -27,7 +27,7 @@ const Button = forwardRef(function Button({
       className={`${variantClass} ${sizeClass} ${className}`.trim()}
       {...props}
     >
-      {loading && <span className="button-spinner" role="status" aria-label="Đang xử lý" />}
+      {loading && <span className="button-spinner" role="status" aria-label="Processing" />}
       {children}
     </button>
   );

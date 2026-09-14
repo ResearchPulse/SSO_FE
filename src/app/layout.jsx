@@ -3,7 +3,7 @@ import '../shared/ui/components/Button/Button.css';
 
 export const metadata = {
   title: 'Hyperdata Lab',
-  description: 'Đăng nhập và đăng ký tài khoản Hyperdata Lab',
+  description: 'Sign in and create your Hyperdata Lab account.',
   icons: {
     icon: '/hyperdata-lab-logo.png',
     apple: '/hyperdata-lab-logo.png',

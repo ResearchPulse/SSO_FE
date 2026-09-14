@@ -30,8 +30,8 @@ function EyeIcon({ hidden }) {
 }
 
 const queryErrorMessages = {
-  google_auth_failed: 'Đăng nhập Google không thành công.',
-  social_auth_failed: 'Không thể xác thực tài khoản Google.',
+  google_auth_failed: 'Google sign-in failed.',
+  social_auth_failed: 'Unable to authenticate with Google.',
 };
 
 export default function AuthScreen() {
@@ -50,14 +50,14 @@ export default function AuthScreen() {
 
     if (queryError) {
       clearOidcContext();
-      setStatus(queryErrorMessages[queryError] || 'Đăng nhập không thành công.');
+      setStatus(queryErrorMessages[queryError] || 'Sign-in failed.');
       setError(true);
       return;
     }
 
     if (oidcContext?.invalid) {
       clearOidcContext();
-      setStatus('Yêu cầu đăng nhập SSO không hợp lệ.');
+      setStatus('Invalid SSO sign-in request.');
       setError(true);
       return;
     }
@@ -76,13 +76,13 @@ export default function AuthScreen() {
     setError(false);
 
     if (!email.trim() || !password) {
-      setStatus('Vui lòng nhập email và mật khẩu.');
+      setStatus('Please enter your email and password.');
       setError(true);
       return;
     }
 
     if (oidcContext?.invalid) {
-      setStatus('Yêu cầu đăng nhập SSO không hợp lệ.');
+      setStatus('Invalid SSO sign-in request.');
       setError(true);
       return;
     }
@@ -93,8 +93,8 @@ export default function AuthScreen() {
       window.location.assign(isOidcFlow ? buildAuthorizeUrl(oidcContext) : '/auth/callback');
     } catch (requestError) {
       const message = requestError.message.toLowerCase().includes('invalid')
-        ? 'Email hoặc mật khẩu không đúng.'
-        : requestError.message;
+        ? 'Invalid email or password.'
+        : 'Unable to sign in. Please try again.';
       setStatus(message);
       setError(true);
     } finally {
