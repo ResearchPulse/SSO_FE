@@ -283,6 +283,7 @@ a:hover::after, a:focus-visible::after { transform: scaleX(1); transform-origin:
 @media (max-width: 760px) {
   .auth-page--reference { display: block; height: auto; min-height: 100dvh; overflow-y: auto; padding: 12px; }
   .auth-page--reference .auth-frame { display: block; width: 100%; height: auto; min-height: 0; border-radius: 20px; }
+  .auth-page--reference .brand-panel { display: none; }
   .auth-page--reference .brand-panel { min-height: 520px; padding: 36px 28px 28px; }
   .auth-page--reference .brand-copy { max-width: 100%; }
   .auth-page--reference .brand-copy { padding-top: 56px; }
