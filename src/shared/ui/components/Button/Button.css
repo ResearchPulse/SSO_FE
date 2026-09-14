@@ -1,0 +1,51 @@
+/* Shared ResearchPulse button system. Change CTA states here. */
+.btn-primary-glow,
+.btn-dark-solid,
+.btn-outline-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: 1px solid transparent;
+  font: inherit;
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
+}
+
+.btn-primary-glow:disabled,
+.btn-dark-solid:disabled,
+.btn-outline-secondary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary-glow:hover:not(:disabled),
+.btn-dark-solid:hover:not(:disabled),
+.btn-outline-secondary:hover:not(:disabled) { transform: translateY(-1px); }
+.btn-primary-glow:active:not(:disabled),
+.btn-dark-solid:active:not(:disabled),
+.btn-outline-secondary:active:not(:disabled) { transform: translateY(0); }
+
+.sso-button,
+.primary-button { position: relative; width: 100%; min-height: 52px; gap: 11px; padding: 14px 24px; border-radius: 9px; }
+.sso-button { border-color: var(--line); background: #fff; color: var(--ink); font-weight: 700; }
+.sso-button:hover:not(:disabled) { background: #f1f3f4; box-shadow: 0 5px 16px rgba(18,35,49,.07); }
+.primary-button { border-color: var(--orange); background: var(--orange); color: #fff; font-weight: 700; box-shadow: 0 7px 17px rgba(244,119,33,.2); }
+button.primary-button:hover:not(:disabled) { border-color: var(--orange-dark); background: var(--orange-dark); color: #fff; box-shadow: 0 9px 20px rgba(217,95,13,.25); }
+.sso-button svg:first-child { width: 21px; height: 21px; }
+.sso-button svg:last-child,
+.primary-button svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.sso-button svg:last-child { position: absolute; right: 24px; margin-left: 0; color: var(--muted); }
+.primary-button svg { position: absolute; right: 24px; margin-left: 0; }
+.sso-button:hover:not(:disabled) svg:last-child,
+.primary-button:hover:not(:disabled) svg { transform: translateX(3px); }
+.sso-button svg:last-child,
+.primary-button svg { transition: transform 160ms ease-out; }
+.btn-primary-glow:active:not(:disabled),
+.btn-dark-solid:active:not(:disabled),
+.btn-outline-secondary:active:not(:disabled) { transform: translateY(0) scale(.99); transition-duration: 90ms; }
+.button-spinner { display: inline-block; width: 16px; height: 16px; margin-right: 8px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: button-spin .7s linear infinite; }
+@keyframes button-spin { to { transform: rotate(360deg); } }
+
+.register-page .role-field legend em,
+.register-page .register-grid--details .field-group:nth-child(2) label em { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary-glow, .btn-dark-solid, .btn-outline-secondary, .button-spinner { animation: none; transition: none; }
+}

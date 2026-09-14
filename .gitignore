@@ -6,3 +6,7 @@ plans
 /hs.json
 .mcp.json
 AGENTS.md
+
+node_modules
+dist
+.next
