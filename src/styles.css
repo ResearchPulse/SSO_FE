@@ -173,7 +173,7 @@ a:hover::after, a:focus-visible::after { transform: scaleX(1); transform-origin:
 .brand-accent { width: 60px; height: 3px; margin-top: 28px; border-radius: 999px; background: var(--primary); }
 .auth-page--reference .brand-footer { position: relative; z-index: 2; color: var(--muted); font-size: 12px; }
 
-.research-illustration { display: block; width: 100%; max-width: 520px; height: auto; margin: 24px auto 0; overflow: visible; }
+.research-illustration { display: block; width: 100%; max-width: 420px; height: auto; margin: 24px auto 0; overflow: visible; }
 .illustration-orbit { fill: none; stroke: color-mix(in srgb, var(--primary) 28%, transparent); stroke-width: 1.5; }
 .illustration-dot { fill: var(--primary); opacity: 0.45; }
 .illustration-card rect:first-child { fill: oklch(0.99 0.004 245); stroke: oklch(0.9 0.018 245); stroke-width: 1; }
@@ -195,6 +195,7 @@ a:hover::after, a:focus-visible::after { transform: scaleX(1); transform-origin:
 
 .form-topline { align-self: flex-end; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .form-topline a { margin-left: 8px; color: var(--primary); font-weight: 700; }
+.auth-page--reference .form-topline a { display: inline-block; width: fit-content; text-decoration: none; }
 .auth-page--reference .form-shell { width: min(100%, 424px); margin: auto; animation: reference-form-enter 500ms cubic-bezier(0.16, 1, 0.3, 1) both; }
 .auth-page--reference .form-heading { margin-bottom: 36px; }
 .auth-page--reference .form-heading h2 { margin: 0; color: var(--ink); font-family: inherit; font-size: clamp(2rem, 3vw, 2.5rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.045em; text-wrap: balance; }
@@ -218,7 +219,7 @@ a:hover::after, a:focus-visible::after { transform: scaleX(1); transform-origin:
 .auth-page--reference .password-wrap .icon-button { top: 4px; right: 4px; width: 44px; height: 44px; color: var(--reference-icon); }
 .auth-page--reference .password-wrap .icon-button:hover { color: var(--primary); background: var(--reference-soft); }
 .auth-page--reference .password-wrap .icon-button svg { width: 20px; height: 20px; }
-.reference-forgot { display: block; width: fit-content; margin-top: 10px; margin-left: auto; color: var(--primary); font-size: 13px; font-weight: 600; text-align: right; }
+.reference-forgot { display: block; width: fit-content; margin-top: 10px; margin-left: auto; color: var(--primary); font-size: 13px; font-weight: 600; text-align: right; text-decoration: none; }
 .reference-forgot:hover { text-decoration: none; }
 .auth-page--reference .status-message { margin: 0 0 18px; border-radius: 9px; }
 .auth-page--reference .primary-button { width: 100%; min-height: 52px; margin-top: 8px; border: 1px solid var(--primary); border-radius: 9px; color: #fff; background: var(--primary); box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 24%, transparent); font-family: inherit; font-size: 16px; font-weight: 700; }
@@ -268,20 +269,41 @@ a:hover::after, a:focus-visible::after { transform: scaleX(1); transform-origin:
   .auth-page--reference .form-panel { padding-inline: 48px; }
 }
 
+@media (max-height: 960px) and (min-width: 761px) {
+  .auth-page--reference { padding-block: 24px; }
+  .auth-page--reference .brand-panel,
+  .auth-page--reference .form-panel { padding-block: 28px; }
+  .auth-page--reference .brand-copy { padding: 32px 0 8px; }
+  .auth-page--reference .research-illustration { max-width: 380px; margin-top: 16px; }
+  .auth-page--reference .form-heading { margin-bottom: 24px; }
+  .auth-page--reference .divider { margin-block: 24px; }
+  .auth-page--reference .field-group { margin-bottom: 14px; }
+  .auth-page--reference .input-with-icon input:not([type='checkbox']),
+  .auth-page--reference .field-group > input:not([type='checkbox']) { height: 48px; }
+  .auth-page--reference .status-message { margin-bottom: 12px; padding-block: 8px; }
+  .auth-page--reference .primary-button { min-height: 48px; margin-top: 4px; }
+  .auth-page--reference.register-page .segmented-control { min-height: 48px; }
+  .auth-page--reference.register-page .segmented-control button { min-height: 38px; }
+}
+
 @media (max-width: 760px) {
   .auth-page--reference { display: block; height: auto; min-height: 100dvh; overflow-y: auto; padding: 12px; }
-  .auth-page--reference .auth-frame { display: block; min-height: 0; border-radius: 20px; }
+  .auth-page--reference .auth-frame { display: block; width: 100%; height: auto; min-height: 0; border-radius: 20px; }
   .auth-page--reference .brand-panel { min-height: 520px; padding: 36px 28px 28px; }
+  .auth-page--reference .brand-copy { max-width: 100%; }
   .auth-page--reference .brand-copy { padding-top: 56px; }
   .auth-page--reference .brand-copy h1 { font-size: clamp(2.25rem, 10vw, 3rem); }
   .auth-page--reference .brand-copy__description { font-size: 16px; }
+  .auth-page--reference .research-illustration { max-width: 420px; }
   .auth-page--reference .form-panel { min-height: 650px; padding: 32px 28px; }
+  .auth-page--reference .form-shell { width: 100%; }
   .auth-page--reference .form-topline { align-self: flex-end; }
 }
 
 @media (max-width: 420px) {
   .auth-page--reference .brand-panel { min-height: 500px; padding-inline: 24px; }
   .auth-page--reference .form-panel { padding-inline: 20px; }
+  .auth-page--reference .form-topline { max-width: 100%; text-align: right; }
   .auth-page--reference .form-topline { font-size: 12px; }
   .auth-page--reference .form-footer { gap: 16px; }
 }
