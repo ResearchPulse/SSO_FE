@@ -21,7 +21,7 @@ a:hover { text-decoration: none; }
 .register-shell { max-width: 620px; }
 .register-divider { height: 1px; margin: 0 0 29px; background: var(--line); }
 .register-grid { display: grid; gap: 18px; }
-.register-grid--names, .register-grid--details { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.register-grid--names { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .register-shell .field-group { margin-bottom: 18px; }
 .field-group label em, .role-field legend em { color: var(--primary); font-style: normal; }
 .field-with-icon > div { position: relative; }
@@ -29,9 +29,6 @@ a:hover { text-decoration: none; }
 .field-with-icon input { padding-left: 52px !important; }
 .field-leading-icon { display: grid; place-items: center; border: 1.5px solid currentColor; border-radius: 3px; font-size: 0; }
 .field-leading-icon::after { width: 10px; height: 7px; border: 1.5px solid currentColor; border-top: 0; border-radius: 0 0 2px 2px; content: ''; }
-.segmented-control { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; min-height: 52px; padding: 4px; border: 1px solid var(--line); border-radius: 9px; background: #f1f4f5; }
-.segmented-control button { min-height: 42px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
-.segmented-control button.is-selected { background: #fff; color: var(--primary); font-weight: 700; box-shadow: 0 2px 8px rgba(18,35,49,.07); }
 .role-field { min-width: 0; margin: 3px 0 25px; padding: 0; border: 0; }
 .role-field legend { margin-bottom: 9px; color: var(--ink); font-size: 14px; font-weight: 700; }
 .role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
@@ -59,7 +56,7 @@ a:hover { text-decoration: none; }
 @keyframes brand-copy-slide-up { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 900px) { .auth-page { grid-template-columns: minmax(300px, 38%) 1fr; }.brand-panel { padding-inline: clamp(25px, 4vw, 48px); }.brand-copy h1 { font-size: clamp(32px, 5vw, 46px); }.form-panel { padding-inline: clamp(28px, 5vw, 64px); } }
 @media (max-width: 680px) { .auth-page { display: block; }.brand-panel { display: none; }.brand-lottie { display: none; }.form-panel { min-height: 100dvh; align-items: start; padding: 28px 20px 40px; }.form-shell { padding-top: 8px; }.mobile-brand { display: flex; }.form-heading { margin-bottom: 28px; }.form-heading h2 { font-size: 38px; }.form-legal { margin-top: 45px; } }
-@media (max-width: 520px) { .register-grid--names, .register-grid--details, .role-grid { grid-template-columns: 1fr; }.role-card { min-height: 92px; flex-direction: row; justify-content: flex-start; padding-inline: 18px; text-align: left; }.role-card svg { margin: 0 4px 0 0; }.role-card span { margin-left: auto; max-width: 130px; text-align: right; } }
+@media (max-width: 520px) { .register-grid--names, .role-grid { grid-template-columns: 1fr; }.role-card { min-height: 92px; flex-direction: row; justify-content: flex-start; padding-inline: 18px; text-align: left; }.role-card svg { margin: 0 4px 0 0; }.role-card span { margin-left: auto; max-width: 130px; text-align: right; } }
 
 /* Motion system: entrance hierarchy, quiet micro-interactions, no bounce. */
 .auth-page { animation: page-fade-in 400ms cubic-bezier(.22, .8, .28, 1) both; }
@@ -251,11 +248,6 @@ a:hover::after, a:focus-visible::after { transform: scaleX(1); transform-origin:
 .auth-page--reference.register-page .field-group { margin-bottom: 16px; }
 .auth-page--reference.register-page .register-grid { gap: 16px; }
 .auth-page--reference.register-page .terms-row { margin-bottom: 20px !important; font-size: 13px !important; }
-.auth-page--reference.register-page .segmented-control { position: relative; }
-.auth-page--reference.register-page .segmented-control::before { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 6px); border-radius: 7px; background: var(--reference-panel); box-shadow: 0 2px 8px oklch(0.2 0.02 245 / 0.07); content: ''; pointer-events: none; transform: translateX(0); transition: transform 360ms cubic-bezier(0.16, 1, 0.3, 1); }
-.auth-page--reference.register-page .segmented-control.is-female::before { transform: translateX(calc(100% + 4px)); }
-.auth-page--reference.register-page .segmented-control button { position: relative; z-index: 1; background: transparent; transition: color 240ms ease-out; }
-.auth-page--reference.register-page .segmented-control button.is-selected { background: transparent; box-shadow: none; }
 
 @keyframes reference-frame-enter { from { opacity: 0; transform: translateY(10px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes reference-form-enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -286,8 +278,6 @@ a:hover::after, a:focus-visible::after { transform: scaleX(1); transform-origin:
   .auth-page--reference .field-group > input:not([type='checkbox']) { height: 48px; }
   .auth-page--reference .status-message { margin-bottom: 12px; padding-block: 8px; }
   .auth-page--reference .primary-button { min-height: 48px; margin-top: 4px; }
-  .auth-page--reference.register-page .segmented-control { min-height: 48px; }
-  .auth-page--reference.register-page .segmented-control button { min-height: 38px; }
 }
 
 @media (max-width: 760px) {
@@ -310,4 +300,34 @@ a:hover::after, a:focus-visible::after { transform: scaleX(1); transform-origin:
   .auth-page--reference .form-topline { max-width: 100%; text-align: right; }
   .auth-page--reference .form-topline { font-size: 12px; }
   .auth-page--reference .form-footer { gap: 16px; }
+}
+
+.auth-page--reference.verify-page .form-heading { margin-bottom: 32px; }
+.verify-icon { display: grid; width: 48px; height: 48px; margin-bottom: 20px; place-items: center; border-radius: 12px; color: var(--primary); background: var(--reference-soft); }
+.verify-icon svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.verify-email { color: var(--ink); font-weight: 700; overflow-wrap: anywhere; }
+.verification-code { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin: 4px 0 20px; }
+.verification-code input { width: 100%; height: 60px; min-width: 0; padding: 0; border: 1px solid var(--line); border-radius: 10px; outline: none; color: var(--ink); background: var(--reference-panel); font-family: inherit; font-size: 24px; font-weight: 700; text-align: center; transition: border-color 160ms ease-out, background-color 160ms ease-out, transform 160ms ease-out; }
+.verification-code input:focus { border-color: var(--reference-focus); background: var(--reference-panel); transform: translateY(-2px); }
+.verify-resend-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; color: var(--muted); font-size: 13px; }
+.resend-button { min-height: 44px; padding: 8px 0; border: 0; color: var(--primary); background: transparent; cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; transition: color 160ms ease-out, transform 160ms ease-out; }
+.resend-button:hover:not(:disabled) { color: var(--primary-dark); transform: translateX(-2px); }
+.resend-button:disabled { color: var(--muted); cursor: not-allowed; }
+.auth-page--reference.verify-page .status-message { margin-top: 18px; }
+.auth-page--reference.verify-page .primary-button { margin-top: 24px; }
+.auth-page--reference.verify-page .form-legal { margin-top: 48px; }
+
+@media (max-height: 960px) and (min-width: 761px) {
+  .auth-page--reference.verify-page .form-heading { margin-bottom: 24px; }
+  .verify-icon { width: 42px; height: 42px; margin-bottom: 14px; }
+  .verify-icon svg { width: 22px; height: 22px; }
+  .verification-code input { height: 52px; }
+  .auth-page--reference.verify-page .primary-button { margin-top: 16px; }
+  .auth-page--reference.verify-page .form-legal { margin-top: 32px; }
+}
+
+@media (max-width: 520px) {
+  .verification-code { gap: 8px; }
+  .verification-code input { height: 52px; font-size: 22px; }
+  .verify-resend-row { align-items: flex-start; flex-direction: column; gap: 4px; }
 }

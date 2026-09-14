@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+﻿const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -13,9 +13,12 @@ async function request(path, options = {}) {
 
 export const api = {
   login: (payload) => request('/api/v1/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
+  logout: () => request('/api/v1/auth/logout', { method: 'POST' }),
   register: (payload) => request('/api/v1/auth/register', { method: 'POST', body: JSON.stringify(payload) }),
   forgotPassword: (payload) => request('/api/v1/auth/forgot-password', { method: 'POST', body: JSON.stringify(payload) }),
   resetPassword: (payload) => request('/api/v1/auth/reset-password', { method: 'POST', body: JSON.stringify(payload) }),
+  verifyEmail: (payload) => request('/api/v1/auth/verify-email', { method: 'POST', body: JSON.stringify(payload) }),
+  resendVerification: (payload) => request('/api/v1/auth/resend-verification', { method: 'POST', body: JSON.stringify(payload) }),
   me: () => request('/api/v1/auth/me'),
 };
 

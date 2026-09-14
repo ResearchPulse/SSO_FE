@@ -1,31 +1,47 @@
-import { API_BASE } from './api';
+﻿import { API_BASE } from './api';
 
 const OIDC_CONTEXT_KEY = 'researchpulse:oidc-context';
 
-const readContextValues = (source) => ({
-  client_id: source.get('client_id'),
-  redirect_uri: source.get('redirect_uri'),
-  state: source.get('state'),
-  scope: source.get('scope') || 'openid profile email',
-  code_challenge: source.get('code_challenge'),
-  code_challenge_method: source.get('code_challenge_method') || 'S256',
-});
-
 export function getOidcContext(source) {
-  const values = readContextValues(source);
-  const hasContext = Object.values(values).some(Boolean);
+  const get = (key) => {
+    let val = source?.get ? source.get(key) : null;
+    if (!val && typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      val = params.get(key);
+    }
+    return val;
+  };
+
+  const clientId = get('client_id');
+  const redirectUri = get('redirect_uri');
+  const state = get('state');
+  const codeChallenge = get('code_challenge');
+  const codeChallengeMethod = get('code_challenge_method');
+  const scope = get('scope');
+
+  const hasContext = Boolean(
+    clientId || redirectUri || state || codeChallenge || codeChallengeMethod || scope
+  );
 
   if (!hasContext) return null;
 
-  if (!values.client_id || !values.redirect_uri || !values.state || !values.code_challenge) {
+  if (!clientId || !redirectUri || !state || !codeChallenge) {
     return { invalid: true };
   }
 
-  if (values.code_challenge_method !== 'S256') {
+  const method = codeChallengeMethod || 'S256';
+  if (method !== 'S256') {
     return { invalid: true };
   }
 
-  return values;
+  return {
+    client_id: clientId,
+    redirect_uri: redirectUri,
+    state,
+    scope: scope || 'openid profile email',
+    code_challenge: codeChallenge,
+    code_challenge_method: method,
+  };
 }
 
 export function buildAuthorizeUrl(context) {
@@ -40,14 +56,17 @@ export function buildAuthorizeUrl(context) {
 
 export function saveOidcContext(context) {
   if (typeof window === 'undefined' || !context || context.invalid) return;
-  window.sessionStorage.setItem(OIDC_CONTEXT_KEY, JSON.stringify(context));
+  const str = JSON.stringify(context);
+  try { window.sessionStorage.setItem(OIDC_CONTEXT_KEY, str); } catch {}
+  try { window.localStorage.setItem(OIDC_CONTEXT_KEY, str); } catch {}
 }
 
 export function getSavedOidcContext() {
   if (typeof window === 'undefined') return null;
 
   try {
-    const raw = window.sessionStorage.getItem(OIDC_CONTEXT_KEY);
+    let raw = window.sessionStorage.getItem(OIDC_CONTEXT_KEY);
+    if (!raw) raw = window.localStorage.getItem(OIDC_CONTEXT_KEY);
     if (!raw) return null;
     const context = JSON.parse(raw);
     return context && !context.invalid ? context : null;
@@ -58,5 +77,6 @@ export function getSavedOidcContext() {
 
 export function clearOidcContext() {
   if (typeof window === 'undefined') return;
-  window.sessionStorage.removeItem(OIDC_CONTEXT_KEY);
+  try { window.sessionStorage.removeItem(OIDC_CONTEXT_KEY); } catch {}
+  try { window.localStorage.removeItem(OIDC_CONTEXT_KEY); } catch {}
 }

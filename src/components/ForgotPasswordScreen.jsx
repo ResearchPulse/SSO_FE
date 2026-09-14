@@ -62,5 +62,5 @@ export default function ForgotPasswordScreen() {
         </section>
       </div>
     </main>
- );
-} 
+  );
+}
